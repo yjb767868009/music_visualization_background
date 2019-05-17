@@ -2,10 +2,25 @@ import datetime
 import os
 from flask import *
 from music_recognition import Music_Recognition
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app, supports_credentials=True)
 music_rec = Music_Recognition()
+
+
+@app.after_request
+def af_request(resp):
+    """
+    #请求钩子，在所有的请求发生后执行，加入headers。
+    :param resp:
+    :return:
+    """
+    resp = make_response(resp)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    resp.headers['Access-Control-Allow-Methods'] = 'GET,POST'
+    resp.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'
+    return resp
 
 
 @app.route('/music', methods=['POST'])
@@ -26,4 +41,4 @@ def upload():
 
 
 if __name__ == '__main__':
-    app.run('172.16.13.43', port=8081)
+    app.run('0.0.0.0', port=8081)
